@@ -52,9 +52,60 @@
         </dependency>        
         <dependency>
           <groupId>org.netbeans.api</groupId>
-          <artifactId>org-openide-util</artifactId>
+          <artifactId>org-netbeans-modules-projectuiapi</artifactId>
           <version>RELEASE120</version>
         </dependency>        
+        <dependency>
+          <groupId>org.netbeans.api</groupId>
+          <artifactId>org-openide-util</artifactId>
+          <version>RELEASE120</version>
+        </dependency>
+        <dependency>
+          <groupId>org.netbeans.api</groupId>
+          <artifactId>org-openide-util-ui</artifactId>
+          <version>RELEASE120</version>
+        </dependency>
+        <dependency>
+          <groupId>org.netbeans.api</groupId>
+          <artifactId>org-openide-awt</artifactId>
+          <version>RELEASE120</version>
+        </dependency>
+        <dependency>
+          <groupId>org.netbeans.api</groupId>
+          <artifactId>org-openide-dialogs</artifactId>
+          <version>RELEASE120</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-util-lookup</artifactId>
+            <version>RELEASE120</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-filesystems</artifactId>
+            <version>RELEASE120</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-loaders</artifactId>
+            <version>RELEASE120</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-nodes</artifactId>
+            <version>RELEASE120</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-io</artifactId>
+            <version>RELEASE120</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-api-progress</artifactId>
+            <version>RELEASE120</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
