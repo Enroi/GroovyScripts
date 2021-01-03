@@ -15,3 +15,7 @@ Groovy script can be started in such ways:
 1. Click mouse right button to Groovy script in project tab and select "Run Groovy script" item.
 2. Click mouse right button in editor and select "Run Groovy script"
 3. Open Groovy script for edit and select menu item "Run"-"Run Groovy script"
+
+![From project](docs/images/From-Project-tab.jpg)
+![From editor](docs/images/From-Editor.jpg)
+![From menu item](docs/images/From-menu-item.jpg)
