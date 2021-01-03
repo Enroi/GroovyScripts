@@ -8,7 +8,7 @@ There are 2 ways for configuration path to Groovy executable
 Path to Groovy executable can be set for all "Groovy Scripts" projects in menu item "Tools"-"Options" tab "Miscellaneous" subtab "Groovy Script"
 ![Global](docs/images/Tools-Options.jpg)
 ### For project
-Path to Groovy executable can set for "Groovy Script" project in project properties. 
+Path to Groovy executable can be set for "Groovy Script" project in project properties. 
 ![By project](docs/images/Project-Properties.jpg)
 ### Run Groovy script
 Groovy script can be started in such ways:
