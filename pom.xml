@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.nichost.enroi</groupId>
     <artifactId>groovy-scripts</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>nbm</packaging>
     <name>Groovy Scripts</name>
     <url>https://github.com/Enroi/GroovyScripts</url>
@@ -20,7 +20,7 @@
         <connection>scm:git:https://github.com/Enroi/GroovyScripts.git</connection>
         <developerConnection>scm:git:https://github.com/Enroi/GroovyScripts.git</developerConnection>
         <url>https://github.com/Enroi/GroovyScripts/tree/${project.scm.tag}</url>
-        <tag>master</tag>
+        <tag>groovy-scripts-1.0</tag>
     </scm>    
     <licenses>
         <license>
