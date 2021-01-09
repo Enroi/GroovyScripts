@@ -1,3 +1,5 @@
 /groovy-scripts/target/
 /target/
 /nb-configuration.xml
+/release.properties
+/pom.xml.releaseBackup
