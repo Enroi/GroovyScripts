@@ -5,7 +5,7 @@ import org.vorlyanskiy.netbeans.groovy.datamodel.OptionsDataModel;
 
 /**
  *
- * @author Vladimir Orlyanskiy <vorlyanskiy@fusionconnect.com>
+ * @author Vladimir Orlyanskiy
  */
 public class OptionsPanel extends javax.swing.JPanel {
     
