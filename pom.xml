@@ -20,7 +20,7 @@
         <connection>scm:git:git@github.com:Enroi/GroovyScripts.git</connection>
         <developerConnection>scm:git:git@github.com:Enroi/GroovyScripts.git</developerConnection>
         <url>https://github.com/Enroi/GroovyScripts/tree/${project.scm.tag}</url>
-        <tag>groovy-scripts-1.1</tag>
+        <tag>groovy-scripts-1.2</tag>
     </scm>    
     <licenses>
         <license>
