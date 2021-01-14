@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.nichost.enroi</groupId>
     <artifactId>groovy-scripts</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
     <packaging>nbm</packaging>
     <name>Groovy Scripts</name>
     <url>https://github.com/Enroi/GroovyScripts</url>
