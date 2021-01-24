@@ -42,19 +42,25 @@ public final class RunGroovySProject implements ActionListener {
     @SuppressWarnings("empty-statement")
     public void actionPerformed(ActionEvent ev) {
         FileObject primaryFile = context.getPrimaryFile();
+        org.openide.windows.InputOutput io = IOProvider.getDefault().getIO(primaryFile.getName(), true);
+        io.setFocusTaken(true);
+        Task task = null;
+        String pathToGroovy = detectPathToGroovy(primaryFile);
+        if (pathToGroovy != null && !pathToGroovy.isEmpty()) {
+            task = new Task(new RunScript(primaryFile, pathToGroovy, io));
+        } else {
+            task = new Task(new RunScriptInternal(primaryFile, io));
+        }
+        RequestProcessor rp = new RequestProcessor("GroovyScriptRunner");
+        rp.post(task);
+    }
+    
+    private String detectPathToGroovy(FileObject primaryFile) {
         String pathToGroovy = getPathToGroovy(primaryFile);
         if (pathToGroovy == null || pathToGroovy.trim().length() == 0) {
             pathToGroovy = VariousProjectUtils.getGlobalGroovyPath();
-            if (pathToGroovy == null || pathToGroovy.trim().length() == 0) {
-                JOptionPane.showMessageDialog(null, "Set path to Groovy executable in menu \"Tools\"-\"Options\" or in Properties of project. ");
-                return;
-            }
         }
-        org.openide.windows.InputOutput io = IOProvider.getDefault().getIO(primaryFile.getName(), true);
-        io.setFocusTaken(true);
-        Task task = new Task(new RunScript(primaryFile, pathToGroovy, io));
-        RequestProcessor rp = new RequestProcessor("GroovyScriptRunner");
-        rp.post(task);
+        return pathToGroovy;
     }
     
     private String getPathToGroovy(FileObject primaryFile) {
