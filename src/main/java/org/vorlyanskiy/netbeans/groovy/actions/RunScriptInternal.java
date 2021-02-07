@@ -15,7 +15,7 @@ import org.openide.windows.IOProvider;
 
 @ActionID(
         category = "Build",
-        id = "org.vorlyanskiy.netbeans.groovy.actions.RunGroovyScriptInternal"
+        id = "org.vorlyanskiy.netbeans.groovy.actions.RunScriptInternal"
 )
 @ActionRegistration(
         displayName = "#CTL_RunGroovyScriptInternal"
@@ -26,11 +26,11 @@ import org.openide.windows.IOProvider;
     @ActionReference(path = "Menu/BuildProject", position = -190),
 })
 @Messages("CTL_RunGroovyScriptInternal=Run Groovy Script Internal")
-public final class RunGroovyScriptInternal implements ActionListener {
+public final class RunScriptInternal implements ActionListener {
 
     private final DataObject context;
 
-    public RunGroovyScriptInternal(DataObject context) {
+    public RunScriptInternal(DataObject context) {
         this.context = context;
     }
     

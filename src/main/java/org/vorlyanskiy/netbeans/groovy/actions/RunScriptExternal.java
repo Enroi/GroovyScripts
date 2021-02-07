@@ -1,4 +1,4 @@
-package org.vorlyanskiy.netbeans.groovy;
+package org.vorlyanskiy.netbeans.groovy.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,7 +19,7 @@ import org.vorlyanskiy.netbeans.groovy.utils.VariousProjectUtils;
 
 @ActionID(
         category = "Build",
-        id = "org.vorlyanskiy.netbeans.groovy.RunGroovySProject"
+        id = "org.vorlyanskiy.netbeans.groovy.actions.RunScriptExternal"
 )
 @ActionRegistration(
         displayName = "#CTL_RunGroovySProject"
@@ -30,11 +30,11 @@ import org.vorlyanskiy.netbeans.groovy.utils.VariousProjectUtils;
     @ActionReference(path = "Menu/BuildProject", position = -90)
 })
 @Messages("CTL_RunGroovySProject=Run Groovy script")
-public final class RunGroovySProject implements ActionListener {
+public final class RunScriptExternal implements ActionListener {
 
     private final DataObject context;
 
-    public RunGroovySProject(DataObject context) {
+    public RunScriptExternal(DataObject context) {
         this.context = context;
     }
 
@@ -46,7 +46,7 @@ public final class RunGroovySProject implements ActionListener {
         io.setFocusTaken(true);
         String pathToGroovy = detectPathToGroovy(primaryFile);
         if (pathToGroovy != null && !pathToGroovy.isEmpty()) {
-            Task task = new Task(new RunScript(primaryFile, pathToGroovy, io));
+            Task task = new Task(new RunnerScriptExternal(primaryFile, pathToGroovy, io));
             RequestProcessor rp = new RequestProcessor("GroovyScriptRunner");
             rp.post(task);
         } else {

@@ -1,4 +1,4 @@
-package org.vorlyanskiy.netbeans.groovy;
+package org.vorlyanskiy.netbeans.groovy.actions;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,13 +13,13 @@ import org.openide.windows.OutputWriter;
 /**
  *
  */
-public class RunScript implements Runnable {
+public class RunnerScriptExternal implements Runnable {
 
     private final FileObject fileObject;
     private final String pathToGroovy;
     private final InputOutput io;
 
-    public RunScript(FileObject fileObject, String pathToGroovy, InputOutput io) {
+    public RunnerScriptExternal(FileObject fileObject, String pathToGroovy, InputOutput io) {
         this.fileObject = fileObject;
         this.pathToGroovy = pathToGroovy;
         this.io = io;
