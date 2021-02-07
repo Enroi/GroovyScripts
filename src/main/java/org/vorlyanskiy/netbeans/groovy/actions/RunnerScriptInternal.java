@@ -1,7 +1,11 @@
 package org.vorlyanskiy.netbeans.groovy.actions;
 
 import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.netbeans.api.progress.ProgressHandle;
 import org.openide.filesystems.FileObject;
@@ -15,6 +19,7 @@ public class RunnerScriptInternal implements Runnable {
     
     private final FileObject fileObject;
     private final InputOutput io;
+    private static final Logger LOG = Logger.getLogger(RunnerScriptInternal.class.getName());
 
     public RunnerScriptInternal(FileObject fileObject, InputOutput io) {
         this.fileObject = fileObject;
@@ -27,20 +32,19 @@ public class RunnerScriptInternal implements Runnable {
             ProgressHandle ph = ProgressHandle.createHandle(fileObject.getName(), () -> {
                 return true;
             });
-            
             ph.start();
-            io.getOut().println("test line before");
             GroovyShell gs = new GroovyShell();
+            gs.setProperty("out", io.getOut());
             gs.evaluate(fileObject.toURI());
-            io.getOut().println("test line after");
             io.getOut().flush();
             io.getOut().close();
             ph.finish();
             ph.close();
         } catch (CompilationFailedException | IOException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace();
-            Exceptions.printStackTrace(ex);
+            Arrays.asList(ex.getStackTrace()).stream().forEach(ste -> {
+                io.getOut().println(ste);
+            });
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 

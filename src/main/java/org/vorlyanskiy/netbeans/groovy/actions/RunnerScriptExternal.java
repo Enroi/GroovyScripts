@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.netbeans.api.progress.ProgressHandle;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
 
@@ -18,6 +19,7 @@ public class RunnerScriptExternal implements Runnable {
     private final FileObject fileObject;
     private final String pathToGroovy;
     private final InputOutput io;
+    private static final Logger LOG = Logger.getLogger(RunnerScriptExternal.class.getName());
 
     public RunnerScriptExternal(FileObject fileObject, String pathToGroovy, InputOutput io) {
         this.fileObject = fileObject;
@@ -42,7 +44,7 @@ public class RunnerScriptExternal implements Runnable {
             Arrays.asList(ex.getStackTrace()).stream().forEach(ste -> {
                 io.getOut().println(ste);
             });
-            Exceptions.printStackTrace(ex);
+            LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
     

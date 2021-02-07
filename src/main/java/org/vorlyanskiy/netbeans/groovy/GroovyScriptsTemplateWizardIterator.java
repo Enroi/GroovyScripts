@@ -37,7 +37,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-// TODO define position attribute
 @TemplateRegistration(folder = "Project/GroovyScripts", displayName = "#GroovyScriptsTemplate_displayName", description = "GroovyScriptsTemplateDescription.html", iconBase = "org/vorlyanskiy/netbeans/groovy/GroovyScriptsTemplate.png", content = "GroovyScriptsTemplateProject.zip")
 @Messages("GroovyScriptsTemplate_displayName=Groovy Scripts")
 public class GroovyScriptsTemplateWizardIterator implements WizardDescriptor./*Progress*/InstantiatingIterator {
