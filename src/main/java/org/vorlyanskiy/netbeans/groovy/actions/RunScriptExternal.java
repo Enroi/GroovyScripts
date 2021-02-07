@@ -29,7 +29,7 @@ import org.vorlyanskiy.netbeans.groovy.utils.VariousProjectUtils;
     @ActionReference(path = "Editors/text/x-groovy/Popup", position = 800),
     @ActionReference(path = "Menu/BuildProject", position = -90)
 })
-@Messages("CTL_RunGroovySProject=Run Groovy script")
+@Messages("CTL_RunGroovySProject=Run Groovy script external")
 public final class RunScriptExternal implements ActionListener {
 
     private final DataObject context;
