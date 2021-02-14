@@ -25,7 +25,7 @@ import org.openide.windows.IOProvider;
     @ActionReference(path = "Editors/text/x-groovy/Popup", position = 800),
     @ActionReference(path = "Menu/BuildProject", position = -190),
 })
-@Messages("CTL_RunGroovyScriptInternal=Run Groovy Script Internal")
+@Messages("CTL_RunGroovyScriptInternal=Run with bundled Groovy")
 public final class RunScriptInternal implements ActionListener {
 
     private final DataObject context;
