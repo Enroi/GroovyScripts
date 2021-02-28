@@ -29,7 +29,9 @@ public class ProjectNodesList implements NodeList<FileObject> {
     public List<FileObject> keys() {
         FileObject projectDirectory = project.getProjectDirectory().getFileObject(".");
         List<FileObject> fileObjects = Arrays.asList(projectDirectory.getChildren()).stream().filter(fo -> {
-            return fo.isFolder() || (fo.getExt() != null && fo.getExt().equalsIgnoreCase("groovy"));
+            return fo.isFolder() 
+                    || (fo.getExt() != null && 
+                        (fo.getExt().equalsIgnoreCase("groovy") || fo.getExt().equalsIgnoreCase("java")));
         }).sorted((fo1, fo2) -> {
             return fo1.getName().compareToIgnoreCase(fo2.getName());
         }).collect(Collectors.toList());

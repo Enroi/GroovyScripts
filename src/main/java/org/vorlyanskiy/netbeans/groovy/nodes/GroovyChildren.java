@@ -1,5 +1,6 @@
 package org.vorlyanskiy.netbeans.groovy.nodes;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -50,7 +51,9 @@ public class GroovyChildren extends Children.SortedArray {
     }
 
     private boolean isGroovyScriptOrFolder(FileObject fo1) {
-        return fo1.isFolder() || (fo1.getExt() != null && fo1.getExt().equalsIgnoreCase("groovy"));
+        return fo1.isFolder() 
+                || (fo1.getExt() != null && 
+                    (fo1.getExt().equalsIgnoreCase("groovy") || fo1.getExt().equalsIgnoreCase("java")));
     }
 
     class LocalFileChangeAdapter extends FileChangeAdapter {

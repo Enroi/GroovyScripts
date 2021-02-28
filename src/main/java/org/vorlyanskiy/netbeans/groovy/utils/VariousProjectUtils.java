@@ -1,9 +1,14 @@
 package org.vorlyanskiy.netbeans.groovy.utils;
 
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.openide.util.NbPreferences;
+import org.openide.windows.InputOutput;
 import org.vorlyanskiy.netbeans.groovy.datamodel.OptionsDataModel;
 
 /**
@@ -33,4 +38,17 @@ public class VariousProjectUtils {
     public static final void putGlobalGroovyPath(String globalGroovyPath) {
         NbPreferences.forModule(VariousProjectUtils.class).put(GLOBAL_GROOVY_PATH, globalGroovyPath);
     }
+    
+    public static void logException(final Exception ex, final Logger log, InputOutput io) {
+        Arrays.asList(ex.getStackTrace()).stream().forEach(ste -> {
+            io.getOut().println(ste);
+        });
+        log.log(Level.SEVERE, ex.getMessage(), ex);
+    }
+    
+    public static Optional<String> getExtensionByStringHandling(String filename) {
+        return Optional.ofNullable(filename)
+          .filter(f -> f.contains("."))
+          .map(f -> f.substring(filename.lastIndexOf(".") + 1));
+    }    
 }
