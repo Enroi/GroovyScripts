@@ -50,7 +50,12 @@ public class RunnerScriptInternal implements Runnable {
     }
 
     private void compileJavaFiles(GroovyShell gs, File folder, String testFilesForExtension) {
-        Arrays.asList(folder.listFiles())
+        Arrays.stream(folder.listFiles())
+                .filter(file -> {
+                    String filePath = file.getPath();
+                    filePath = filePath.replace("\\", "/");;
+                    return !filePath.equals(fileObject.getPath());
+                })
                 .forEach(file -> {
                     if (file.isDirectory()) {
                         compileJavaFiles(gs, file, testFilesForExtension);

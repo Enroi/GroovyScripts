@@ -16,6 +16,7 @@ import org.openide.util.RequestProcessor;
 import org.openide.util.Task;
 import org.openide.util.Utilities;
 import org.openide.windows.IOProvider;
+import org.vorlyanskiy.netbeans.groovy.utils.VariousProjectUtils;
 
 @ActionID(
         category = "Build",
@@ -41,23 +42,12 @@ public final class RunScriptInternal implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         FileObject primaryFile = context.getPrimaryFile();
-        Project project = getParentProjectDirectory(primaryFile);
+        Project project = VariousProjectUtils.getParentProjectDirectory(primaryFile);
         File projectFolder = Utilities.toFile(project.getProjectDirectory().toURI());
         org.openide.windows.InputOutput io = IOProvider.getDefault().getIO(primaryFile.getName(), true);
         io.setFocusTaken(true);
         Task task = new Task(new RunnerScriptInternal(primaryFile, io, projectFolder));
         RequestProcessor rp = new RequestProcessor("GroovyScriptRunner");
         rp.post(task);
-    }
-    
-    private Project getParentProjectDirectory(FileObject folder) {
-        Project project = FileOwnerQuery.getOwner(folder);
-        if (project != null) {
-            Project projectForParent = getParentProjectDirectory(project.getProjectDirectory().getParent());
-            if (projectForParent != null) {
-                return projectForParent;
-            }
-        }
-        return project;
     }
 }

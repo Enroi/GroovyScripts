@@ -5,8 +5,10 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
+import org.openide.filesystems.FileObject;
 import org.openide.util.NbPreferences;
 import org.openide.windows.InputOutput;
 import org.vorlyanskiy.netbeans.groovy.datamodel.OptionsDataModel;
@@ -51,4 +53,17 @@ public class VariousProjectUtils {
           .filter(f -> f.contains("."))
           .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }    
+    
+    
+    public static Project getParentProjectDirectory(FileObject folder) {
+        Project project = FileOwnerQuery.getOwner(folder);
+        if (project != null) {
+            Project projectForParent = getParentProjectDirectory(project.getProjectDirectory().getParent());
+            if (projectForParent != null) {
+                return projectForParent;
+            }
+        }
+        return project;
+    }
+    
 }

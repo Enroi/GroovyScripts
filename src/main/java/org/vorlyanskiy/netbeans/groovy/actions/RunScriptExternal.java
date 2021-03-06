@@ -2,6 +2,7 @@ package org.vorlyanskiy.netbeans.groovy.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import javax.swing.JOptionPane;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
@@ -14,6 +15,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Task;
+import org.openide.util.Utilities;
 import org.openide.windows.IOProvider;
 import org.vorlyanskiy.netbeans.groovy.utils.VariousProjectUtils;
 
@@ -42,11 +44,13 @@ public final class RunScriptExternal implements ActionListener {
     @SuppressWarnings("empty-statement")
     public void actionPerformed(ActionEvent ev) {
         FileObject primaryFile = context.getPrimaryFile();
+        Project project = VariousProjectUtils.getParentProjectDirectory(primaryFile);
+        File projectFolder = Utilities.toFile(project.getProjectDirectory().toURI());
         org.openide.windows.InputOutput io = IOProvider.getDefault().getIO(primaryFile.getName(), true);
         io.setFocusTaken(true);
         String pathToGroovy = detectPathToGroovy(primaryFile);
         if (pathToGroovy != null && !pathToGroovy.isEmpty()) {
-            Task task = new Task(new RunnerScriptExternal(primaryFile, pathToGroovy, io));
+            Task task = new Task(new RunnerScriptExternal(primaryFile, pathToGroovy, io, projectFolder));
             RequestProcessor rp = new RequestProcessor("GroovyScriptRunner");
             rp.post(task);
         } else {
