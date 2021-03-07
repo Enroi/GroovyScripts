@@ -8,6 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.progress.ProgressHandle;
@@ -25,6 +28,7 @@ public class RunnerScriptExternal implements Runnable {
     private final InputOutput io;
     private final File projectFolder;
     private final String jars;
+    private final ExecutorService executorService;
     private Path tempDir;
     private static final Logger LOG = Logger.getLogger(RunnerScriptExternal.class.getName());
 
@@ -34,6 +38,8 @@ public class RunnerScriptExternal implements Runnable {
         this.projectFolder = projectFolder;
         this.jars = jars;
         this.io = io;
+        executorService = Executors.newFixedThreadPool(10);
+        
     }
 
     @Override
@@ -41,12 +47,12 @@ public class RunnerScriptExternal implements Runnable {
         try {
             tempDir = Files.createTempDirectory("GroovyScripts");
             compileOther(projectFolder);
-            String pathToFile = fileObject.getPath();
+            shotdownExecutor();
             ProcessBuilder builder = new ProcessBuilder();
             builder.command(pathToGroovy, 
                     "-cp",
                     generateClassPath(),
-                    pathToFile);
+                    fileObject.getPath());
             Process process = builder.start();
             ProgressHandle ph = ProgressHandle.createHandle(fileObject.getName(), () -> {
                 process.destroyForcibly();
@@ -107,26 +113,29 @@ public class RunnerScriptExternal implements Runnable {
     }
 
     private void compileOneFile(File file) {
-        Path pathToGroovyC = getPathToGroovyC();
-        try {
-            ProcessBuilder pb = new ProcessBuilder();
-            pb.command(pathToGroovyC.toString(),
-                    "-j",
-                    "-d",
-                    tempDir.toString(),
-                    file.getAbsolutePath());
-            File tempFile = File.createTempFile("groovycompileout", ".txt");
-            pb.redirectError(tempFile);
-            Process process = pb.start();
-            int result = process.waitFor();
-            if (result == 0) {
-                tempFile.delete();
-            } else {
-                tempFile.deleteOnExit();
+        Runnable runnable = () -> {
+            Path pathToGroovyC = getPathToGroovyC();
+            try {
+                ProcessBuilder pb = new ProcessBuilder();
+                pb.command(pathToGroovyC.toString(),
+                        "-j",
+                        "-d",
+                        tempDir.toString(),
+                        file.getAbsolutePath());
+                File tempFile = File.createTempFile("groovycompileout", ".txt");
+                pb.redirectError(tempFile);
+                Process process = pb.start();
+                int result = process.waitFor();
+                if (result == 0) {
+                    tempFile.delete();
+                } else {
+                    tempFile.deleteOnExit();
+                }
+            } catch (IOException | InterruptedException ex) {
+                //possible in script related project
             }
-        } catch (IOException | InterruptedException ex) {
-            //possible in script related project
-        }
+        };
+        executorService.execute(runnable);
     }
 
     private Path getPathToGroovyC() {
@@ -143,5 +152,16 @@ public class RunnerScriptExternal implements Runnable {
         } else {
             return "groovyc";
         }
+    }
+
+    private void shotdownExecutor() {
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException ex) {
+            executorService.shutdownNow();
+        }    
     }
 }

@@ -36,6 +36,7 @@ public class RunnerScriptInternal implements Runnable {
             });
             ph.start();
             GroovyShell gs = new GroovyShell();
+            gs.getContext().setProperty("out", io.getOut());
             gs.setProperty("out", io.getOut());
             compileJavaFiles(gs, projectFolder, "java");
             compileJavaFiles(gs, projectFolder, "groovy");
