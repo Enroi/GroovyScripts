@@ -3,9 +3,12 @@ package org.vorlyanskiy.netbeans.groovy.actions;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
@@ -61,6 +64,7 @@ public class RunnerScriptExternal implements Runnable {
             ph.start();
             inheritIO(process.getInputStream(), io.getOut(), ph);
             inheritIO(process.getErrorStream(), io.getOut(), null);
+            recursiveDeleteOnExit();
         } catch (IOException | InterruptedException ex) {
             Arrays.asList(ex.getStackTrace()).stream().forEach(ste -> {
                 io.getOut().println(ste);
@@ -162,6 +166,21 @@ public class RunnerScriptExternal implements Runnable {
             }
         } catch (InterruptedException ex) {
             executorService.shutdownNow();
-        }    
+        }
     }
+    
+    private void recursiveDeleteOnExit() throws IOException {
+      Files.walkFileTree(tempDir, new SimpleFileVisitor<Path>() {
+        @Override
+        public FileVisitResult visitFile(Path file, @SuppressWarnings("unused") BasicFileAttributes attrs) {
+          file.toFile().deleteOnExit();
+          return FileVisitResult.CONTINUE;
+        }
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, @SuppressWarnings("unused") BasicFileAttributes attrs) {
+          dir.toFile().deleteOnExit();
+          return FileVisitResult.CONTINUE;
+        }
+      });
+    }    
 }
