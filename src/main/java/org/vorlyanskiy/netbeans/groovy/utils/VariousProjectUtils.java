@@ -19,6 +19,7 @@ import org.vorlyanskiy.netbeans.groovy.datamodel.OptionsDataModel;
 public class VariousProjectUtils {
     
     public static final String GROOVY_PATH = "GroovyPath";
+    public static final String CLASSPATH_JARS = "ClasspathJars";
     private static final String GLOBAL_GROOVY_PATH = "GlobalGroovyPath";
 
     public static String getPath(Project project) {
@@ -31,6 +32,18 @@ public class VariousProjectUtils {
             }
         }
         return path;
+    }
+    
+    public static String getClasspathJars(Project project) {
+        String jars = null;
+        if (project != null) {
+            Preferences preferences = ProjectUtils.getPreferences(project, OptionsDataModel.class, true);
+            String classpathJars = preferences.get(CLASSPATH_JARS, "");
+            if (!classpathJars.isEmpty()) {
+                jars = classpathJars;
+            }
+        }
+        return jars;
     }
     
     public static String getGlobalGroovyPath() {

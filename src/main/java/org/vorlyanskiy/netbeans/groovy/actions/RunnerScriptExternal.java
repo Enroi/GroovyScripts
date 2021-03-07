@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.progress.ProgressHandle;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
 
@@ -25,13 +24,15 @@ public class RunnerScriptExternal implements Runnable {
     private final String pathToGroovy;
     private final InputOutput io;
     private final File projectFolder;
+    private final String jars;
     private Path tempDir;
     private static final Logger LOG = Logger.getLogger(RunnerScriptExternal.class.getName());
 
-    public RunnerScriptExternal(FileObject fileObject, String pathToGroovy, InputOutput io, File projectFolder) {
+    public RunnerScriptExternal(FileObject fileObject, String pathToGroovy, InputOutput io, File projectFolder, String jars) {
         this.fileObject = fileObject;
         this.pathToGroovy = pathToGroovy;
         this.projectFolder = projectFolder;
+        this.jars = jars;
         this.io = io;
     }
 
@@ -44,7 +45,7 @@ public class RunnerScriptExternal implements Runnable {
             ProcessBuilder builder = new ProcessBuilder();
             builder.command(pathToGroovy, 
                     "-cp",
-                    tempDir.toString(),
+                    generateClassPath(),
                     pathToFile);
             Process process = builder.start();
             ProgressHandle ph = ProgressHandle.createHandle(fileObject.getName(), () -> {
@@ -60,6 +61,16 @@ public class RunnerScriptExternal implements Runnable {
             });
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
         }
+    }
+    
+    private String generateClassPath() {
+        String result = tempDir.toString();
+        if (jars != null && !jars.isEmpty()) {
+            String[] splitted = jars.split(",");
+            String classpath = String.join(File.pathSeparator, splitted);
+            result += File.pathSeparator + classpath;
+        }
+        return result;
     }
     
     private void inheritIO(final InputStream src, final OutputWriter dest, ProgressHandle ph) {

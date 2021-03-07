@@ -1,6 +1,10 @@
 package org.vorlyanskiy.netbeans.groovy.panels;
 
+import java.io.File;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.vorlyanskiy.netbeans.groovy.datamodel.OptionsDataModel;
 
 /**
@@ -11,11 +15,15 @@ public class OptionsPanel extends javax.swing.JPanel {
     
 
     private final OptionsDataModel dataModel;
+    private final DefaultListModel dlm;
     /**
      * Creates new form OptionsPanel
      */
     public OptionsPanel(OptionsDataModel dataModel) {
         this.dataModel = dataModel;
+        dlm = new DefaultListModel();
+        dataModel.getClasspathJars()
+                .forEach(dlm::addElement);
         initComponents();
     }
 
@@ -30,6 +38,10 @@ public class OptionsPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jTextFieldPathToGroovy = new javax.swing.JTextField();
         jButtonGroovyPathSelection = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jListJars = new javax.swing.JList<>();
+        jButtonAddJar = new javax.swing.JButton();
+        jButtonDeleteJar = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(OptionsPanel.class, "OptionsPanel.jLabel1.text")); // NOI18N
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -58,16 +70,39 @@ public class OptionsPanel extends javax.swing.JPanel {
             }
         });
 
+        jListJars.setModel(dlm);
+        jScrollPane1.setViewportView(jListJars);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButtonAddJar, org.openide.util.NbBundle.getMessage(OptionsPanel.class, "OptionsPanel.jButton1.text")); // NOI18N
+        jButtonAddJar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAddJarActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButtonDeleteJar, org.openide.util.NbBundle.getMessage(OptionsPanel.class, "OptionsPanel.jButtonDeleteJar.text_1")); // NOI18N
+        jButtonDeleteJar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeleteJarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextFieldPathToGroovy, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTextFieldPathToGroovy, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonGroovyPathSelection)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButtonGroovyPathSelection, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonAddJar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonDeleteJar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -78,7 +113,16 @@ public class OptionsPanel extends javax.swing.JPanel {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jTextFieldPathToGroovy)
                         .addComponent(jButtonGroovyPathSelection)))
-                .addGap(0, 34, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addGap(11, 11, 11))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButtonAddJar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonDeleteJar)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -98,10 +142,22 @@ public class OptionsPanel extends javax.swing.JPanel {
         selectGroovyPath();
     }//GEN-LAST:event_jButtonGroovyPathSelectionActionPerformed
 
+    private void jButtonAddJarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddJarActionPerformed
+        addJar();
+    }//GEN-LAST:event_jButtonAddJarActionPerformed
+
+    private void jButtonDeleteJarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteJarActionPerformed
+        excludeJar();
+    }//GEN-LAST:event_jButtonDeleteJarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAddJar;
+    private javax.swing.JButton jButtonDeleteJar;
     private javax.swing.JButton jButtonGroovyPathSelection;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JList<String> jListJars;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextFieldPathToGroovy;
     // End of variables declaration//GEN-END:variables
 
@@ -112,6 +168,28 @@ public class OptionsPanel extends javax.swing.JPanel {
             String path = fc.getSelectedFile().getPath();
             dataModel.setPathToGroovy(path);
             jTextFieldPathToGroovy.setText(path);
+        }
+    }
+
+    private void addJar() {
+        JFileChooser fc = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("JAR files", "jar");
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.addChoosableFileFilter(filter);
+        int result = fc.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String path = fc.getSelectedFile().getPath();
+            dlm.addElement(path);
+            dataModel.addJar(path);
+        }
+        
+    }
+
+    private void excludeJar() {
+        if (jListJars.getSelectedIndex() >= 0) {
+            String selectedValue = jListJars.getSelectedValue();
+            dlm.removeElement(selectedValue);
+            dataModel.removeJar(selectedValue);
         }
     }
 }

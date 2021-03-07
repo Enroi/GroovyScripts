@@ -50,7 +50,8 @@ public final class RunScriptExternal implements ActionListener {
         io.setFocusTaken(true);
         String pathToGroovy = detectPathToGroovy(primaryFile);
         if (pathToGroovy != null && !pathToGroovy.isEmpty()) {
-            Task task = new Task(new RunnerScriptExternal(primaryFile, pathToGroovy, io, projectFolder));
+            String jars = getJars(primaryFile);
+            Task task = new Task(new RunnerScriptExternal(primaryFile, pathToGroovy, io, projectFolder, jars));
             RequestProcessor rp = new RequestProcessor("GroovyScriptRunner");
             rp.post(task);
         } else {
@@ -74,6 +75,16 @@ public final class RunScriptExternal implements ActionListener {
             return getPathToGroovy(primaryFile.getParent());
         }
         return pathToGroovy;
+    }
+
+    private String getJars(FileObject primaryFile) {
+        Project project = FileOwnerQuery.getOwner(primaryFile);
+        String jars = VariousProjectUtils.getClasspathJars(project);
+        if ((jars == null || jars.trim().length() == 0)
+                && primaryFile.getParent() != null) {
+            return getJars(primaryFile.getParent());
+        }
+        return jars;
     }
     
 }

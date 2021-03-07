@@ -34,12 +34,24 @@ public class GeneralGroovyProperties implements ProjectCustomizer.CompositeCateg
                 .findFirst()
                 .ifPresent(project -> {
             Preferences preferences = ProjectUtils.getPreferences(project, OptionsDataModel.class, true);
-            String groovyPath = preferences.get(VariousProjectUtils.GROOVY_PATH, "");
-            if (!groovyPath.isEmpty()) {
-                dataModel.setPathToGroovy(groovyPath);
-            }
+            setGroovyPath(preferences, dataModel);
+            setClasspathJars(preferences, dataModel);
         });
         return dataModel;
+    }
+
+    private void setClasspathJars(Preferences preferences, OptionsDataModel dataModel) {
+        String classpathJars = preferences.get(VariousProjectUtils.CLASSPATH_JARS, "");
+        if (classpathJars != null) {
+            dataModel.setClasspathJars(classpathJars);
+        }
+    }
+
+    private void setGroovyPath(Preferences preferences, OptionsDataModel dataModel) {
+        String groovyPath = preferences.get(VariousProjectUtils.GROOVY_PATH, "");
+        if (!groovyPath.isEmpty()) {
+            dataModel.setPathToGroovy(groovyPath);
+        }
     }
 
     @NbBundle.Messages("LBL_Config_General=General")
@@ -76,6 +88,7 @@ public class GeneralGroovyProperties implements ProjectCustomizer.CompositeCateg
                     .ifPresent(project -> {
                 Preferences preferences = ProjectUtils.getPreferences(project, OptionsDataModel.class, true);
                 preferences.put(VariousProjectUtils.GROOVY_PATH, dataModel.getPathToGroovy());
+                preferences.put(VariousProjectUtils.CLASSPATH_JARS, dataModel.getClasspathJarsAsSstring());
             });
         }
 
