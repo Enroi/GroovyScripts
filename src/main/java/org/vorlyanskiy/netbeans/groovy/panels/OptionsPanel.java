@@ -1,10 +1,12 @@
 package org.vorlyanskiy.netbeans.groovy.panels;
 
 import java.io.File;
+import java.util.Arrays;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.openide.util.NbPreferences;
 import org.vorlyanskiy.netbeans.groovy.datamodel.OptionsDataModel;
 
 /**
@@ -16,6 +18,7 @@ public class OptionsPanel extends javax.swing.JPanel {
 
     private final OptionsDataModel dataModel;
     private final DefaultListModel dlm;
+    private static final String DEFAULT_LIBRARY_FOLDER = "Library folder";
     /**
      * Creates new form OptionsPanel
      */
@@ -25,6 +28,7 @@ public class OptionsPanel extends javax.swing.JPanel {
         dataModel.getClasspathJars()
                 .forEach(dlm::addElement);
         initComponents();
+        jListJars.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     }
 
     /**
@@ -172,24 +176,49 @@ public class OptionsPanel extends javax.swing.JPanel {
     }
 
     private void addJar() {
+        JFileChooser fc = initFileChooser();
+        int result = fc.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            Arrays.stream(fc.getSelectedFiles())
+                    .forEach((File sf) -> {
+                        String path = sf.getPath();
+                        dlm.addElement(path);
+                        dataModel.addJar(path);
+                    });
+        }
+        saveDefaultDirectory(fc.getCurrentDirectory());
+    }
+
+    private JFileChooser initFileChooser() {
         JFileChooser fc = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("JAR files", "jar");
         fc.setAcceptAllFileFilterUsed(false);
         fc.addChoosableFileFilter(filter);
-        int result = fc.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            String path = fc.getSelectedFile().getPath();
-            dlm.addElement(path);
-            dataModel.addJar(path);
+        fc.setMultiSelectionEnabled(true);
+        File previousDirectory = getPreviousDirectory();
+        if (previousDirectory != null) {
+            fc.setCurrentDirectory(previousDirectory);
         }
-        
+        return fc;
     }
 
     private void excludeJar() {
-        if (jListJars.getSelectedIndex() >= 0) {
-            String selectedValue = jListJars.getSelectedValue();
-            dlm.removeElement(selectedValue);
-            dataModel.removeJar(selectedValue);
+        jListJars.getSelectedValuesList()
+                .forEach(selectedValue -> {
+                    dlm.removeElement(selectedValue);
+                    dataModel.removeJar(selectedValue);
+                });
+    }
+
+    private File getPreviousDirectory() {
+        String folderPath = NbPreferences.forModule(getClass()).get(DEFAULT_LIBRARY_FOLDER, null);
+        if (folderPath != null) {
+            return new File(folderPath);
         }
+        return null;
+    }
+    
+    private void saveDefaultDirectory(File folder) {
+        NbPreferences.forModule(getClass()).put(DEFAULT_LIBRARY_FOLDER, folder.getAbsolutePath());
     }
 }
