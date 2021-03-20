@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Logger;
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.codehaus.groovy.control.ErrorCollector;
+import org.codehaus.groovy.control.MultipleCompilationErrorsException;
+import org.codehaus.groovy.control.messages.Message;
 import org.netbeans.api.progress.ProgressHandle;
 import org.openide.filesystems.FileObject;
 import org.openide.windows.InputOutput;
@@ -30,10 +33,10 @@ public class RunnerScriptInternal implements Runnable {
 
     @Override
     public void run() {
+        ProgressHandle ph = ProgressHandle.createHandle(fileObject.getName(), () -> {
+            return true;
+        });
         try {
-            ProgressHandle ph = ProgressHandle.createHandle(fileObject.getName(), () -> {
-                return true;
-            });
             ph.start();
             GroovyShell gs = new GroovyShell();
             gs.getContext().setProperty("out", io.getOut());
@@ -41,13 +44,19 @@ public class RunnerScriptInternal implements Runnable {
             compileJavaFiles(gs, projectFolder, "java");
             compileJavaFiles(gs, projectFolder, "groovy");
             gs.evaluate(fileObject.toURI());
-            io.getOut().flush();
-            io.getOut().close();
-            ph.finish();
-            ph.close();
+        } catch (MultipleCompilationErrorsException ex) {
+            ErrorCollector errorCollector = ex.getErrorCollector();
+            errorCollector.getErrors()
+                    .forEach((Message error) -> {
+                        error.write(io.getOut());
+                    });
         } catch (CompilationFailedException | IOException ex) {
             VariousProjectUtils.logException(ex, LOG, io);
         }
+        io.getOut().flush();
+        io.getOut().close();
+        ph.finish();
+        ph.close();
     }
 
     private void compileJavaFiles(GroovyShell gs, File folder, String testFilesForExtension) {
