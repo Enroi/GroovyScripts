@@ -1,5 +1,7 @@
 package org.vorlyanskiy.netbeans.groovy;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.openide.filesystems.FileObject;
@@ -13,11 +15,13 @@ import org.openide.nodes.Node;
  *
  */
 public class GroovyProjectLogicalView implements LogicalViewProvider {
+
+    private final GroovyProject project;
     
     @StaticResource()
     public static final String GROOVY_ICON = "org/vorlyanskiy/netbeans/groovy/icon16.png";
-
-    private final GroovyProject project;
+    
+    private static final Logger LOG = Logger.getLogger(GroovyProjectLogicalView.class.getName());
 
     public GroovyProjectLogicalView(GroovyProject project) {
         this.project = project;
@@ -32,17 +36,15 @@ public class GroovyProjectLogicalView implements LogicalViewProvider {
             Node nodeOfProjectFolder = projectFolder.getNodeDelegate();
             return new ProjectNode(nodeOfProjectFolder, project);
         } catch (DataObjectNotFoundException donfe) {
-            donfe.printStackTrace();
+            LOG.log(Level.SEVERE, "Can not create View Provider", donfe);
             //Fallback-the directory couldn't be created -
             //read-only filesystem or something evil happened
             return new AbstractNode(Children.LEAF);
         }
     }
 
-
     @Override
     public Node findPath(Node root, Object target) {
-        //leave unimplemented for now
         return null;
     }
 

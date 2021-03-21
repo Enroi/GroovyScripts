@@ -1,9 +1,11 @@
 package org.vorlyanskiy.netbeans.groovy.nodes;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileEvent;
@@ -12,12 +14,21 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 
 public class GroovyChildren extends Children.SortedArray {
 
     private final FileObject fo;
+    
+    private boolean rootProjectFolder = false;
+    
+    private static final Logger LOG = Logger.getLogger(GroovyChildren.class.getName());
 
+    public GroovyChildren(FileObject fo, boolean rootProjectFolder) {
+        this(fo);
+        this.rootProjectFolder = rootProjectFolder;
+        setComparator(new RootLevelComparator());
+    }
+    
     public GroovyChildren(FileObject fo) {
         this.fo = fo;
         LocalFileChangeAdapter localFileChangeAdapter = new LocalFileChangeAdapter();
@@ -31,22 +42,24 @@ public class GroovyChildren extends Children.SortedArray {
                 .filter(fo -> {
                     return isGroovyScriptOrFolder(fo);
                 })
-                .sorted((fo1, fo2) -> {
-                    return fo1.getName().compareToIgnoreCase(fo2.getName());
-                }).map(fob -> {
-            Node nodeDelegate = null;
-            try {
-                nodeDelegate = DataObject.find(fob).getNodeDelegate();
-                GroovyChildren groovyChildren = null;
-                if (!nodeDelegate.isLeaf()) {
-                    groovyChildren = new GroovyChildren(fob);
-                }
-                nodeDelegate = new GroovyScriptNode(nodeDelegate, groovyChildren);
-            } catch (DataObjectNotFoundException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            return nodeDelegate;
-        }).collect(Collectors.toList());
+                .map(fob -> {
+                    Node nodeDelegate = null;
+                    try {
+                        nodeDelegate = DataObject.find(fob).getNodeDelegate();
+                        GroovyChildren groovyChildren = null;
+                        if (!nodeDelegate.isLeaf()) {
+                            groovyChildren = new GroovyChildren(fob);
+                        }
+                        nodeDelegate = new GroovyScriptNode(nodeDelegate, groovyChildren);
+                    } catch (DataObjectNotFoundException ex) {
+                        LOG.log(Level.SEVERE, ex.getMessage(), ex);
+                    }
+                    return nodeDelegate;
+                })
+                .collect(Collectors.toList());
+        if (rootProjectFolder) {
+            result.add(new LibrariesNode(fo));
+        }
         return result;
     }
 
@@ -95,4 +108,24 @@ public class GroovyChildren extends Children.SortedArray {
         }
 
     }
+    
+    class RootLevelComparator implements Comparator<Node> {
+
+        @Override
+        public int compare(Node o1, Node o2) {
+            if (o1 instanceof LibrariesNode && o2 instanceof GroovyScriptNode) {
+                return 1;
+            } else if (o1 instanceof LibrariesNode && o2 instanceof GroovyScriptNode) {
+                return -1;
+            } else if (o1.getName() != null && o2.getName() == null) {
+                return -1;
+            } else if (o1.getName() == null && o2.getName() != null) {
+                return 1;
+            } else {
+                return o1.getName().compareTo(o2.getName());
+            }
+        }
+    
+    }
+    
 }

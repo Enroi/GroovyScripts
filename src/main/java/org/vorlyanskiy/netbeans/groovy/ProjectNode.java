@@ -21,7 +21,7 @@ public final class ProjectNode extends FilterNode {
 
     public ProjectNode(Node node, GroovyProject project) throws DataObjectNotFoundException {
         super(node, 
-                new GroovyChildren(project.getProjectDirectory()), 
+                new GroovyChildren(project.getProjectDirectory(), true), 
                 new ProxyLookup(new Lookup[]{Lookups.singleton(project), node.getLookup()}));
         this.project = project;
     }

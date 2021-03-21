@@ -78,5 +78,14 @@ public class VariousProjectUtils {
         }
         return project;
     }
-    
+
+    public static String getJars(FileObject primaryFile) {
+        Project project = FileOwnerQuery.getOwner(primaryFile);
+        String jars = VariousProjectUtils.getClasspathJars(project);
+        if ((jars == null || jars.trim().length() == 0)
+                && primaryFile.getParent() != null) {
+            return getJars(primaryFile.getParent());
+        }
+        return jars;
+    }
 }
