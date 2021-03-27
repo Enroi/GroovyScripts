@@ -11,6 +11,7 @@ public class OneLibrary extends AbstractNode implements Comparable<Node> {
 
     public OneLibrary() {
         super(Children.LEAF);
+        setIconBaseWithExtension("org/vorlyanskiy/netbeans/groovy/onelibrary.png");
     }
 
     @Override

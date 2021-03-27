@@ -2,7 +2,6 @@ package org.vorlyanskiy.netbeans.groovy.nodes;
 
 import org.openide.filesystems.FileObject;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
@@ -14,6 +13,7 @@ public class LibrariesNode extends AbstractNode implements Comparable<Node> {
         super (new LibraryChildren(fo));
         setDisplayName("Libraries");
         setName("Libraries");
+        setIconBaseWithExtension("org/vorlyanskiy/netbeans/groovy/library.png");
     }
 
     @Override

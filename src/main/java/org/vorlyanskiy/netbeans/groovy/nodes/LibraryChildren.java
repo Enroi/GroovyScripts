@@ -3,7 +3,6 @@ package org.vorlyanskiy.netbeans.groovy.nodes;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.openide.filesystems.FileObject;
