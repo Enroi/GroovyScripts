@@ -3,6 +3,7 @@ package org.vorlyanskiy.netbeans.groovy.nodes;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.openide.filesystems.FileObject;
@@ -15,7 +16,7 @@ import org.vorlyanskiy.netbeans.groovy.utils.VariousProjectUtils;
  */
 public class LibraryChildren extends Children.SortedArray {
 
-    private FileObject projectFolder;
+    private final FileObject projectFolder;
     
     public LibraryChildren(FileObject fo) {
         this.projectFolder = fo;
@@ -23,12 +24,15 @@ public class LibraryChildren extends Children.SortedArray {
 
     @Override
     protected Collection<Node> initCollection() {
+        List<Node> libraries = Collections.EMPTY_LIST;
         String stringJars = VariousProjectUtils.getJars(projectFolder);
-        String[] splitted = stringJars.split(",");
-        List<Node> libraries = Arrays.stream(splitted)
-                .filter(oneJar -> !oneJar.isEmpty())
-                .map(this::convertStringToNode)
-                .collect(Collectors.toList());
+        if (stringJars != null && !stringJars.isEmpty()) {
+            String[] splitted = stringJars.split(",");
+            libraries = Arrays.stream(splitted)
+                    .filter(oneJar -> !oneJar.isEmpty())
+                    .map(this::convertStringToNode)
+                    .collect(Collectors.toList());
+        }
         return libraries;
     }
     
