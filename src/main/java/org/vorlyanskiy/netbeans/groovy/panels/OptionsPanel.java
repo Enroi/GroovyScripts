@@ -75,6 +75,7 @@ public class OptionsPanel extends javax.swing.JPanel {
         });
 
         jListJars.setModel(dlm);
+        jListJars.setToolTipText(org.openide.util.NbBundle.getMessage(OptionsPanel.class, "OptionsPanel.jListJars.toolTipText")); // NOI18N
         jScrollPane1.setViewportView(jListJars);
 
         org.openide.awt.Mnemonics.setLocalizedText(jButtonAddJar, org.openide.util.NbBundle.getMessage(OptionsPanel.class, "OptionsPanel.jButton1.text")); // NOI18N
