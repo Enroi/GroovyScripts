@@ -3,6 +3,7 @@ package org.vorlyanskiy.netbeans.groovy.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
@@ -48,6 +49,8 @@ public final class RunScriptExternal implements ActionListener {
         File projectFolder = Utilities.toFile(project.getProjectDirectory().toURI());
         org.openide.windows.InputOutput io = IOProvider.getDefault().getIO(primaryFile.getName(), true);
         io.setFocusTaken(true);
+        io.setOutputVisible(true);
+        io.getOut().println("Script started " + new Date());
         String pathToGroovy = detectPathToGroovy(primaryFile);
         if (pathToGroovy != null && !pathToGroovy.isEmpty()) {
             String jars = VariousProjectUtils.getJars(primaryFile);

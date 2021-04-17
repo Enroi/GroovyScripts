@@ -47,6 +47,7 @@ public class RunnerScriptExternal implements Runnable {
 
     @Override
     public void run() {
+        ProgressHandle ph = null;
         try {
             tempDir = Files.createTempDirectory("GroovyScripts");
             compileOther(projectFolder);
@@ -57,7 +58,7 @@ public class RunnerScriptExternal implements Runnable {
                     generateClassPath(),
                     fileObject.getPath());
             Process process = builder.start();
-            ProgressHandle ph = ProgressHandle.createHandle(fileObject.getName(), () -> {
+            ph = ProgressHandle.createHandle(fileObject.getName(), () -> {
                 process.destroyForcibly();
                 return true;
             });
@@ -65,11 +66,18 @@ public class RunnerScriptExternal implements Runnable {
             inheritIO(process.getInputStream(), io.getOut(), ph);
             inheritIO(process.getErrorStream(), io.getOut(), null);
             recursiveDeleteOnExit();
-        } catch (IOException | InterruptedException ex) {
+        } catch (Exception ex) {
             Arrays.asList(ex.getStackTrace()).stream().forEach(ste -> {
                 io.getOut().println(ste);
             });
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            io.getOut().flush();
+            io.getOut().close();
+            if (ph != null) {
+                ph.finish();
+                ph.close();
+            }
         }
     }
     

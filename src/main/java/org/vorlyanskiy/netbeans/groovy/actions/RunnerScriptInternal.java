@@ -50,13 +50,15 @@ public class RunnerScriptInternal implements Runnable {
                     .forEach((Message error) -> {
                         error.write(io.getOut());
                     });
-        } catch (CompilationFailedException | IOException ex) {
+        } catch (Exception ex) {
+            io.getOut().println("ERROR: " + ex.getMessage() );
             VariousProjectUtils.logException(ex, LOG, io);
+        } finally {
+            io.getOut().flush();
+            io.getOut().close();
+            ph.finish();
+            ph.close();
         }
-        io.getOut().flush();
-        io.getOut().close();
-        ph.finish();
-        ph.close();
     }
 
     private void compileJavaFiles(GroovyShell gs, File folder, String testFilesForExtension) {
